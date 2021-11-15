@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -16,6 +17,7 @@ namespace AutoBackup
         public static UnityModManager.ModEntry.ModLogger Logger;
         public static Harmony harmony;
         public static bool IsEnabled = false;
+        public static string startpath;
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
@@ -58,6 +60,21 @@ namespace AutoBackup
             {
                 string userPath = Path.Combine("User");
                 System.Diagnostics.Process.Start(userPath);
+            }
+            GUILayout.Label(" ");
+            if (GUILayout.Button("Adofai를 시작할 때 백업된 파일로 복원하기"))
+            {
+                string userPath = Path.Combine("User", "시작");
+                string user = Path.Combine("User");
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.InitialDirectory = userPath;
+                dialog.Filter = "sav files (*.sav)|*.sav";
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.Copy(dialog.FileName, user + @"\data.sav", true);
+                }
             }
         }
 
