@@ -76,6 +76,22 @@ namespace AutoBackup
                     System.IO.File.Copy(dialog.FileName, user + @"\data.sav", true);
                 }
             }
+
+            if (GUILayout.Button("Adofai를 종료할 때 백업된 파일로 복원하기"))
+            {
+                string userPath = Path.Combine("User", "종료");
+                string user = Path.Combine("User");
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.InitialDirectory = userPath;
+                dialog.Filter = "sav files (*.sav)|*.sav";
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.Copy(dialog.FileName, user + @"\data.sav", true);
+                }
+            }
+            GUILayout.Label("(데이터 복원은 Adofai를 재시작 해야 적용됩니다)");
         }
 
         private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
