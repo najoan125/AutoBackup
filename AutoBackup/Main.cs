@@ -45,6 +45,15 @@ namespace AutoBackup
                     startdi.Create();
                 }
                 System.IO.File.Copy(userPath + @"\data.sav", userPath + @"\시작\" + System.DateTime.Now.ToString("yyyy-MM-dd tt hh.mm.ss") + ".sav");
+
+                string userPath_Custom = Path.Combine("User");
+                string start_Custom = userPath_Custom + @"\시작_Custom";
+                DirectoryInfo startdi_Custom = new DirectoryInfo(start_Custom);
+                if (!startdi_Custom.Exists)
+                {
+                    startdi_Custom.Create();
+                }
+                System.IO.File.Copy(userPath_Custom + @"\custom_data.sav", userPath_Custom + @"\시작_Custom\" + System.DateTime.Now.ToString("yyyy-MM-dd tt hh.mm.ss") + ".sav");
             }
             else
             {
@@ -62,7 +71,7 @@ namespace AutoBackup
                 System.Diagnostics.Process.Start(userPath);
             }
             GUILayout.Label(" ");
-            if (GUILayout.Button("Adofai를 시작할 때 백업된 파일로 복원하기"))
+            if (GUILayout.Button("데이터를 Adofai를 시작할 때 백업된 파일로 복원하기"))
             {
                 string userPath = Path.Combine("User", "시작");
                 string user = Path.Combine("User");
@@ -77,7 +86,7 @@ namespace AutoBackup
                 }
             }
 
-            if (GUILayout.Button("Adofai를 종료할 때 백업된 파일로 복원하기"))
+            if (GUILayout.Button("데이터를 Adofai를 종료할 때 백업된 파일로 복원하기"))
             {
                 string userPath = Path.Combine("User", "종료");
                 string user = Path.Combine("User");
@@ -89,6 +98,37 @@ namespace AutoBackup
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.File.Copy(dialog.FileName, user + @"\data.sav", true);
+                }
+            }
+
+            GUILayout.Label(" ");
+
+            if (GUILayout.Button("커스텀 레벨 데이터를 Adofai를 시작할 때 백업된 파일로 복원하기"))
+            {
+                string userPath = Path.Combine("User", "시작_Custom");
+                string user = Path.Combine("User");
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.InitialDirectory = userPath;
+                dialog.Filter = "sav files (*.sav)|*.sav";
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.Copy(dialog.FileName, user + @"\custom_data.sav", true);
+                }
+            }
+            if (GUILayout.Button("커스텀 레벨 데이터를 Adofai를 종료할 때 백업된 파일로 복원하기"))
+            {
+                string userPath = Path.Combine("User", "종료_Custom");
+                string user = Path.Combine("User");
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.InitialDirectory = userPath;
+                dialog.Filter = "sav files (*.sav)|*.sav";
+                dialog.FilterIndex = 2;
+                dialog.RestoreDirectory = true;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.Copy(dialog.FileName, user + @"\custom_data.sav", true);
                 }
             }
             GUILayout.Label("(데이터 복원은 Adofai를 재시작 해야 적용됩니다)");
@@ -104,6 +144,15 @@ namespace AutoBackup
                 startdi.Create();
             }
             System.IO.File.Copy(userPath + @"\data.sav", userPath + @"\종료\" + System.DateTime.Now.ToString("yyyy-MM-dd tt hh.mm.ss") + ".sav");
+
+            string userPath_Custom = Path.Combine("User");
+            string start_Custom = userPath_Custom + @"\종료_Custom";
+            DirectoryInfo startdi_Custom = new DirectoryInfo(start_Custom);
+            if (!startdi_Custom.Exists)
+            {
+                startdi_Custom.Create();
+            }
+            System.IO.File.Copy(userPath_Custom + @"\custom_data.sav", userPath_Custom + @"\종료_Custom\" + System.DateTime.Now.ToString("yyyy-MM-dd tt hh.mm.ss") + ".sav");
         }
     }
 }
