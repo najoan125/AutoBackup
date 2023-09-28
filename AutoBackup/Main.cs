@@ -15,14 +15,19 @@ namespace AutoBackup
         public static UnityModManager.ModEntry.ModLogger Logger;
         public static Harmony harmony;
         public static bool IsEnabled = false;
-        public static string startpath;
 
         public static void Setup(UnityModManager.ModEntry modEntry)
         {
             Logger = modEntry.Logger;
             modEntry.OnToggle = OnToggle;
-            modEntry.OnSaveGUI = OnSaveGUI;
             modEntry.OnGUI = OnGUI;
+            Application.quitting += OnApplicationQuit;
+        }
+
+        private static void OnApplicationQuit()
+        {
+            Utils.CreateLatestBackupFile();
+            Utils.CreateBackupFile("종료");
         }
 
         private static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)
@@ -35,7 +40,7 @@ namespace AutoBackup
                 harmony = new Harmony(modEntry.Info.Id);
                 harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-                CreateBackupFile("시작");
+                Utils.CreateBackupFile("시작");
             }
             else
             {
@@ -54,89 +59,38 @@ namespace AutoBackup
             }
             GUILayout.Label(" ");
             GUILayout.Label("사용자 설정 및 공식맵 데이터");
-            if (GUILayout.Button("Adofai를 시작할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
+            if (GUILayout.Button("ADOFAI를 시작할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
             {
-                RestoreData("시작");
+                Utils.RestoreData("시작");
+            }
+            if (GUILayout.Button("ADOFAI를 종료할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
+            {
+                Utils.RestoreData("종료");
+            }
+            if (GUILayout.Button("ADOFAI가 마지막으로 종료될 때 백업된 파일로 복원하기", GUILayout.Width(400)))
+            {
+                Utils.RestoreToLatestData();
             }
 
-            if (GUILayout.Button("Adofai를 종료할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
-            {
-                RestoreData("종료");
-            }
+
 
             GUILayout.Label(" ");
             GUILayout.Label("커스텀 레벨");
 
-            if (GUILayout.Button("Adofai를 시작할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
+            if (GUILayout.Button("ADOFAI를 시작할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
             {
-                RestoreCustomData("시작");
+                Utils.RestoreCustomData("시작");
             }
-            if (GUILayout.Button("Adofai를 종료할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
+            if (GUILayout.Button("ADOFAI를 종료할 때 백업된 파일로 복원하기", GUILayout.Width(300)))
             {
-                RestoreCustomData("종료");
+                Utils.RestoreCustomData("종료");
+            }
+            if (GUILayout.Button("ADOFAI가 마지막으로 종료될 때 백업된 파일로 복원하기", GUILayout.Width(400)))
+            {
+                Utils.RestoreToLatestCustomData();
             }
             GUILayout.Label(" ");
             GUILayout.Label("(백업 파일을 불러오는 순간 ADOFAI가 재시작됩니다!)");
-        }
-
-        private static void OnSaveGUI(UnityModManager.ModEntry modEntry)
-        {
-            CreateBackupFile("종료");
-        }
-
-        private static void CreateBackupFile(String name)
-        {
-            string userPath = Path.Combine("User");
-            string start = userPath + @"\"+name;
-            DirectoryInfo startdi = new DirectoryInfo(start);
-            if (!startdi.Exists)
-            {
-                startdi.Create();
-            }
-            File.Copy(userPath + @"\data.sav", userPath + @"\"+name+@"\" + DateTime.Now.ToString("yyyy-MM-dd tt hh.mm.ss") + ".sav");
-
-            string userPath_Custom = Path.Combine("User");
-            string start_Custom = userPath_Custom + @"\"+name+"_Custom";
-            DirectoryInfo startdi_Custom = new DirectoryInfo(start_Custom);
-            if (!startdi_Custom.Exists)
-            {
-                startdi_Custom.Create();
-            }
-            File.Copy(userPath_Custom + @"\custom_data.sav", userPath_Custom + @"\"+name+@"_Custom\" + DateTime.Now.ToString("yyyy-MM-dd tt hh.mm.ss") + ".sav");
-        }
-
-        private static void RestoreData(String name)
-        {
-            string userPath = Path.Combine("User", name);
-            string user = Path.Combine("User");
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.InitialDirectory = userPath;
-            dialog.Filter = "sav files (*.sav)|*.sav";
-            dialog.FilterIndex = 2;
-            dialog.RestoreDirectory = true;
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                File.Copy(dialog.FileName, user + @"\data.sav", true);
-                Process.Start(Application.dataPath.Replace("_Data", ".exe"));
-                Application.Quit();
-            }
-        }
-
-        private static void RestoreCustomData(String name)
-        {
-            string userPath = Path.Combine("User", name+"_Custom");
-            string user = Path.Combine("User");
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.InitialDirectory = userPath;
-            dialog.Filter = "sav files (*.sav)|*.sav";
-            dialog.FilterIndex = 2;
-            dialog.RestoreDirectory = true;
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                File.Copy(dialog.FileName, user + @"\custom_data.sav", true);
-                Process.Start(Application.dataPath.Replace("_Data", ".exe"));
-                Application.Quit();
-            }
         }
     }
 }
